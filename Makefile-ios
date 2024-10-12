@@ -1,0 +1,425 @@
+CC = xcrun -sdk iphoneos clang
+CXX = xcrun -sdk iphoneos clang++
+
+CFLAGS = -arch arm64 \
+         -isysroot $(shell xcrun -sdk iphoneos --show-sdk-path) \
+         -mios-version-min=12.0 \
+         -DHAVE_LIBZ=1 \
+         -DFZ_ENABLE_PDF=1 \
+         -DFZ_ENABLE_JS=0 \
+         -DFZ_ENABLE_SPOT_RENDERING=0 \
+         -DFZ_ENABLE_XPS=0 \
+         -DFZ_ENABLE_SVG=0 \
+         -DFZ_ENABLE_CBZ=0 \
+         -DFZ_ENABLE_IMG=0 \
+         -DFZ_ENABLE_HTML=0 \
+         -DFZ_ENABLE_FB2=0 \
+         -DFZ_ENABLE_MOBI=0 \
+         -DFZ_ENABLE_EPUB=0 \
+         -DFZ_ENABLE_OFFICE=0 \
+         -DFZ_ENABLE_TXT=0 \
+         -DFZ_ENABLE_OCR_OUTPUT=0 \
+         -DFZ_ENABLE_ODT_OUTPUT=0 \
+         -DFZ_ENABLE_DOCX_OUTPUT=0 \
+         -DFZ_ENABLE_ICC=0 \
+         -DFZ_ENABLE_JPX=0 \
+         -DNDEBUG
+
+CFLAGS_SIM = -arch x86_64 \
+            -isysroot $(shell xcrun -sdk iphonesimulator --show-sdk-path) \
+            -mios-simulator-version-min=12.0 \
+            -DHAVE_LIBZ=1 \
+            -DFZ_ENABLE_PDF=1 \
+            -DFZ_ENABLE_JS=0 \
+            -DFZ_ENABLE_SPOT_RENDERING=0 \
+            -DFZ_ENABLE_XPS=0 \
+            -DFZ_ENABLE_SVG=0 \
+            -DFZ_ENABLE_CBZ=0 \
+            -DFZ_ENABLE_IMG=0 \
+            -DFZ_ENABLE_HTML=0 \
+            -DFZ_ENABLE_FB2=0 \
+            -DFZ_ENABLE_MOBI=0 \
+            -DFZ_ENABLE_EPUB=0 \
+            -DFZ_ENABLE_OFFICE=0 \
+            -DFZ_ENABLE_TXT=0 \
+            -DFZ_ENABLE_OCR_OUTPUT=0 \
+            -DFZ_ENABLE_ODT_OUTPUT=0 \
+            -DFZ_ENABLE_DOCX_OUTPUT=0 \
+            -DFZ_ENABLE_ICC=0 \
+            -DFZ_ENABLE_JPX=0 \
+            -DNDEBUG
+
+CFLAGS_CXX = -arch arm64 \
+             -isysroot $(shell xcrun -sdk iphoneos --show-sdk-path) \
+             -mios-version-min=12.0 \
+             -DHAVE_LIBZ=1 \
+             -DFZ_ENABLE_PDF=1 \
+             -DFZ_ENABLE_JS=0 \
+             -DNDEBUG \
+             -fno-exceptions \
+             -fno-rtti \
+             -fno-threadsafe-statics \
+             -fvisibility-inlines-hidden \
+             -std=gnu++11
+
+CFLAGS_CXX_SIM = -arch x86_64 \
+             -isysroot $(shell xcrun -sdk iphonesimulator --show-sdk-path) \
+             -mios-simulator-version-min=12.0 \
+             -DHAVE_LIBZ=1 \
+             -DFZ_ENABLE_PDF=1 \
+             -DFZ_ENABLE_JS=0 \
+             -DNDEBUG \
+             -fno-exceptions \
+             -fno-rtti \
+             -fno-threadsafe-statics \
+             -fvisibility-inlines-hidden \
+             -std=gnu++11
+
+# MuPDF source directory (current directory)
+MUPDF_DIR = .
+
+# Include directories
+INCLUDES = -I$(MUPDF_DIR)/include
+
+# --- FREETYPE2 설정 ---
+# FreeType2의 헤더 파일 경로 추가
+FREETYPE_CFLAGS = -Ithirdparty/freetype/include -Iscripts/freetype
+
+# FreeType2 빌드 옵션 정의
+FREETYPE_BUILD_CFLAGS = -DFT_CONFIG_MODULES_H=\"slimftmodules.h\" \
+                        -DFT_CONFIG_OPTIONS_H=\"slimftoptions.h\" \
+                        -DFT2_BUILD_LIBRARY
+
+# FreeType2 소스 파일 목록
+FREETYPE_SRC = \
+    thirdparty/freetype/src/base/ftbase.c \
+    thirdparty/freetype/src/base/ftbbox.c \
+    thirdparty/freetype/src/base/ftbitmap.c \
+    thirdparty/freetype/src/base/ftdebug.c \
+    thirdparty/freetype/src/base/ftfstype.c \
+    thirdparty/freetype/src/base/ftgasp.c \
+    thirdparty/freetype/src/base/ftglyph.c \
+    thirdparty/freetype/src/base/ftinit.c \
+    thirdparty/freetype/src/base/ftstroke.c \
+    thirdparty/freetype/src/base/ftsynth.c \
+    thirdparty/freetype/src/base/ftsystem.c \
+    thirdparty/freetype/src/base/fttype1.c \
+    thirdparty/freetype/src/cff/cff.c \
+    thirdparty/freetype/src/cid/type1cid.c \
+    thirdparty/freetype/src/psaux/psaux.c \
+    thirdparty/freetype/src/pshinter/pshinter.c \
+    thirdparty/freetype/src/psnames/psnames.c \
+    thirdparty/freetype/src/raster/raster.c \
+    thirdparty/freetype/src/sfnt/sfnt.c \
+    thirdparty/freetype/src/smooth/smooth.c \
+    thirdparty/freetype/src/truetype/truetype.c \
+    thirdparty/freetype/src/type1/type1.c
+
+# --- ZLIB 설정 ---
+# ZLIB의 헤더 파일 경로 추가
+ZLIB_CFLAGS = -Ithirdparty/zlib
+
+# ZLIB 빌드 옵션 정의
+ZLIB_BUILD_CFLAGS = -DHAVE_UNISTD_H \
+                    -DHAVE_STDARG_H
+
+# ZLIB 소스 파일 목록
+ZLIB_SRC = \
+    thirdparty/zlib/adler32.c \
+    thirdparty/zlib/compress.c \
+    thirdparty/zlib/crc32.c \
+    thirdparty/zlib/deflate.c \
+    thirdparty/zlib/inffast.c \
+    thirdparty/zlib/inflate.c \
+    thirdparty/zlib/inftrees.c \
+    thirdparty/zlib/trees.c \
+    thirdparty/zlib/uncompr.c \
+    thirdparty/zlib/zutil.c
+
+# --- HARFBUZZ 설정 ---
+# HarfBuzz의 헤더 파일 경로 추가
+HARFBUZZ_CFLAGS = -Ithirdparty/harfbuzz/src
+
+# HarfBuzz 빌드 옵션 정의
+HARFBUZZ_BUILD_CFLAGS = -Iinclude/mupdf \
+                        $(FREETYPE_CFLAGS) \
+                        -DHAVE_FALLBACK=1 \
+                        -DHAVE_FREETYPE \
+                        -DHAVE_OT \
+                        -DHAVE_ROUND \
+                        -DHAVE_UCDN \
+                        -DHB_NO_MT \
+                        -DHB_NO_PRAGMA_GCC_DIAGNOSTIC \
+                        -w \
+                        -Dhb_malloc_impl=fz_hb_malloc \
+                        -Dhb_calloc_impl=fz_hb_calloc \
+                        -Dhb_free_impl=fz_hb_free \
+                        -Dhb_realloc_impl=fz_hb_realloc
+
+# HarfBuzz 소스 파일 목록
+HARFBUZZ_SRC = \
+    thirdparty/harfbuzz/src/graph/gsubgpos-context.cc \
+    thirdparty/harfbuzz/src/hb-aat-layout.cc \
+    thirdparty/harfbuzz/src/hb-aat-map.cc \
+    thirdparty/harfbuzz/src/hb-blob.cc \
+    thirdparty/harfbuzz/src/hb-buffer.cc \
+    thirdparty/harfbuzz/src/hb-buffer-verify.cc \
+    thirdparty/harfbuzz/src/hb-buffer-serialize.cc \
+    thirdparty/harfbuzz/src/hb-common.cc \
+    thirdparty/harfbuzz/src/hb-face.cc \
+    thirdparty/harfbuzz/src/hb-fallback-shape.cc \
+    thirdparty/harfbuzz/src/hb-font.cc \
+    thirdparty/harfbuzz/src/hb-ft.cc \
+    thirdparty/harfbuzz/src/hb-map.cc \
+    thirdparty/harfbuzz/src/hb-number.cc \
+    thirdparty/harfbuzz/src/hb-ot-cff1-table.cc \
+    thirdparty/harfbuzz/src/hb-ot-cff2-table.cc \
+    thirdparty/harfbuzz/src/hb-ot-color.cc \
+    thirdparty/harfbuzz/src/hb-ot-face.cc \
+    thirdparty/harfbuzz/src/hb-ot-font.cc \
+    thirdparty/harfbuzz/src/hb-ot-layout.cc \
+    thirdparty/harfbuzz/src/hb-ot-map.cc \
+    thirdparty/harfbuzz/src/hb-ot-math.cc \
+    thirdparty/harfbuzz/src/hb-ot-meta.cc \
+    thirdparty/harfbuzz/src/hb-ot-metrics.cc \
+    thirdparty/harfbuzz/src/hb-ot-name.cc \
+    thirdparty/harfbuzz/src/hb-ot-shape.cc \
+    thirdparty/harfbuzz/src/hb-ot-shape-fallback.cc \
+    thirdparty/harfbuzz/src/hb-ot-shape-normalize.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-arabic.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-default.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-hangul.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-hebrew.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-indic.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-indic-table.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-khmer.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-myanmar.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-syllabic.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-thai.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-use.cc \
+    thirdparty/harfbuzz/src/hb-ot-shaper-vowel-constraints.cc \
+    thirdparty/harfbuzz/src/hb-ot-tag.cc \
+    thirdparty/harfbuzz/src/hb-ot-var.cc \
+    thirdparty/harfbuzz/src/hb-set.cc \
+    thirdparty/harfbuzz/src/hb-shape.cc \
+    thirdparty/harfbuzz/src/hb-shape-plan.cc \
+    thirdparty/harfbuzz/src/hb-shaper.cc \
+    thirdparty/harfbuzz/src/hb-static.cc \
+    thirdparty/harfbuzz/src/hb-subset.cc \
+    thirdparty/harfbuzz/src/hb-subset-cff1.cc \
+    thirdparty/harfbuzz/src/hb-subset-cff2.cc \
+    thirdparty/harfbuzz/src/hb-subset-cff-common.cc \
+    thirdparty/harfbuzz/src/hb-subset-input.cc \
+    thirdparty/harfbuzz/src/hb-subset-plan.cc \
+    thirdparty/harfbuzz/src/hb-ucd.cc \
+    thirdparty/harfbuzz/src/hb-unicode.cc
+
+# --- JBIG2DEC 설정 ---
+JBIG2DEC_CFLAGS = -Ithirdparty/jbig2dec
+
+JBIG2DEC_BUILD_CFLAGS = -Iinclude \
+                        -DHAVE_STDINT_H \
+                        -DJBIG_EXTERNAL_MEMENTO_H=\"mupdf/memento.h\"
+
+# JBIG2DEC source files
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_arith.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_arith_iaid.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_arith_int.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_generic.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_halftone.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_huffman.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_hufftab.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_image.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_mmr.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_page.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_refinement.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_segment.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_symbol_dict.c
+JBIG2DEC_SRC += thirdparty/jbig2dec/jbig2_text.c
+
+# --- GUMBO ---
+GUMBO_CFLAGS += -Ithirdparty/gumbo-parser/src
+GUMBO_BUILD_CFLAGS += -std=c99
+
+# GUMBO source files
+GUMBO_SRC += thirdparty/gumbo-parser/src/attribute.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/char_ref.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/error.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/parser.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/string_buffer.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/string_piece.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/tag.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/tokenizer.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/utf8.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/util.c
+GUMBO_SRC += thirdparty/gumbo-parser/src/vector.c
+
+
+# --- LIBJPEG ---
+LIBJPEG_CFLAGS += -Ithirdparty/libjpeg
+LIBJPEG_CFLAGS += -Iscripts/libjpeg
+
+# --- LIBJPEG 소스 파일 ---
+LIBJPEG_SRC += thirdparty/libjpeg/jaricom.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcapimin.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcapistd.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcarith.c
+LIBJPEG_SRC += thirdparty/libjpeg/jccoefct.c
+LIBJPEG_SRC += thirdparty/libjpeg/jccolor.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcdctmgr.c
+LIBJPEG_SRC += thirdparty/libjpeg/jchuff.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcinit.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcmainct.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcmarker.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcmaster.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcomapi.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcparam.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcprepct.c
+LIBJPEG_SRC += thirdparty/libjpeg/jcsample.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdapimin.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdapistd.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdarith.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdatadst.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdatasrc.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdcoefct.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdcolor.c
+LIBJPEG_SRC += thirdparty/libjpeg/jddctmgr.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdhuff.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdinput.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdmainct.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdmarker.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdmaster.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdmerge.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdpostct.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdsample.c
+LIBJPEG_SRC += thirdparty/libjpeg/jdtrans.c
+LIBJPEG_SRC += thirdparty/libjpeg/jerror.c
+LIBJPEG_SRC += thirdparty/libjpeg/jfdctflt.c
+LIBJPEG_SRC += thirdparty/libjpeg/jfdctfst.c
+LIBJPEG_SRC += thirdparty/libjpeg/jfdctint.c
+LIBJPEG_SRC += thirdparty/libjpeg/jidctflt.c
+LIBJPEG_SRC += thirdparty/libjpeg/jidctfst.c
+LIBJPEG_SRC += thirdparty/libjpeg/jidctint.c
+LIBJPEG_SRC += thirdparty/libjpeg/jmemmgr.c
+LIBJPEG_SRC += thirdparty/libjpeg/jquant1.c
+LIBJPEG_SRC += thirdparty/libjpeg/jquant2.c
+LIBJPEG_SRC += thirdparty/libjpeg/jutils.c
+
+
+# --- OPENJPEG ---
+OPENJPEG_CFLAGS += -Ithirdparty/openjpeg/src/lib/openjp2
+OPENJPEG_CFLAGS += -DOPJ_STATIC
+OPENJPEG_CFLAGS += -DOPJ_HAVE_INTTYPES_H
+OPENJPEG_CFLAGS += -DOPJ_HAVE_STDINT_H
+
+OPENJPEG_BUILD_CFLAGS += -Ithirdparty/openjpeg/src/lib/openjp2
+OPENJPEG_BUILD_CFLAGS += -DMUTEX_pthread=0
+
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/bio.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/cio.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/dwt.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/event.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/function_list.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/ht_dec.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/image.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/invert.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/j2k.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/jp2.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/mct.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/mqc.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/openjpeg.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/pi.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/sparse_array.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/t1.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/t2.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/tcd.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/tgt.c
+OPENJPEG_SRC += thirdparty/openjpeg/src/lib/openjp2/thread.c
+
+
+# Files to exclude (기능 비활성화에 따라 필요 없을 수 있는 파일 제외)
+EXCLUDE_FILES = $(MUPDF_DIR)/source/fitz/color-lcms.c \
+                $(MUPDF_DIR)/source/fitz/encode-jpx.c \
+                $(MUPDF_DIR)/source/fitz/leptonica-wrap.c \
+                $(MUPDF_DIR)/source/fitz/output-psd.c \
+                $(MUPDF_DIR)/source/fitz/tessocr.cpp \
+                $(MUPDF_DIR)/source/fitz/track-usage.c \
+                $(MUPDF_DIR)/source/fitz/subset-cff.c \
+                $(MUPDF_DIR)/source/fitz/subset-ttf.c \
+                $(MUPDF_DIR)/source/fitz/memento.c \
+                $(MUPDF_DIR)/source/fitz/output-docx.c
+
+# Source files (MuPDF 소스와 FreeType2, ZLIB 소스를 포함)
+SRCS += $(filter-out $(EXCLUDE_FILES), \
+        $(wildcard $(MUPDF_DIR)/source/cbz/*.c) \
+        $(wildcard $(MUPDF_DIR)/source/fitz/*.c) \
+        $(wildcard $(MUPDF_DIR)/source/html/*.c) \
+        $(wildcard $(MUPDF_DIR)/source/pdf/*.c))
+
+SRCS += $(GUMBO_SRC)
+SRCS += $(LIBJPEG_SRC)
+SRCS += $(OPENJPEG_SRC)
+SRCS += $(FREETYPE_SRC)
+SRCS += $(ZLIB_SRC)
+SRCS += $(HTML_SRC)
+SRCS += $(HARFBUZZ_SRC)
+SRCS += $(JBIG2DEC_SRC)
+
+# Object files for C and C++ sources
+C_OBJS = $(filter %.o, $(patsubst %.cc, %.o, $(SRCS:.c=.o)))
+CXX_OBJS = $(filter %.o, $(patsubst %.c, %.o, $(SRCS:.cc=.o)))
+
+C_OBJS_SIM = $(filter %.sim.o, $(patsubst %.cc, %.sim.o, $(SRCS:.c=.sim.o)))
+CXX_OBJS_SIM = $(filter %.sim.o, $(patsubst %.c, %.sim.o, $(SRCS:.cc=.sim.o)))
+
+# Output library name
+LIB_NAME = libmupdf_text_extract
+OUTPUT = $(LIB_NAME).a
+OUTPUT_SIM = $(LIB_NAME)_sim.a
+UNIVERSAL_OUTPUT = $(LIB_NAME)_universal.a
+
+# CFLAGS에 FreeType2 및 ZLIB 관련 플래그 추가
+CFLAGS += $(FREETYPE_CFLAGS) $(FREETYPE_BUILD_CFLAGS) $(ZLIB_CFLAGS) $(ZLIB_BUILD_CFLAGS) $(HARFBUZZ_CFLAGS)
+CFLAGS_SIM += $(FREETYPE_CFLAGS) $(FREETYPE_BUILD_CFLAGS) $(ZLIB_CFLAGS) $(ZLIB_BUILD_CFLAGS) $(HARFBUZZ_CFLAGS)
+CFLAGS += $(JBIG2DEC_CFLAGS) $(JBIG2DEC_BUILD_CFLAGS)
+CFLAGS_SIM += $(JBIG2DEC_CFLAGS) $(JBIG2DEC_BUILD_CFLAGS)
+CFLAGS += $(GUMBO_CFLAGS) $(GUMBO_BUILD_CFLAGS)
+CFLAGS_SIM += $(GUMBO_CFLAGS) $(GUMBO_BUILD_CFLAGS)
+CFLAGS += $(LIBJPEG_CFLAGS)
+CFLAGS_SIM += $(LIBJPEG_CFLAGS)
+CFLAGS += $(OPENJPEG_CFLAGS) $(OPENJPEG_BUILD_CFLAGS)
+CFLAGS_SIM += $(OPENJPEG_CFLAGS) $(OPENJPEG_BUILD_CFLAGS)
+
+CFLAGS_CXX += $(HARFBUZZ_CFLAGS) $(HARFBUZZ_BUILD_CFLAGS)
+CFLAGS_CXX_SIM += $(HARFBUZZ_CFLAGS) $(HARFBUZZ_BUILD_CFLAGS)
+
+# Targets
+all: $(OUTPUT) $(OUTPUT_SIM)
+
+$(OUTPUT): $(C_OBJS) $(CXX_OBJS)
+	ar rcs $@ $^
+
+$(OUTPUT_SIM): $(C_OBJS_SIM) $(CXX_OBJS_SIM)
+	ar rcs $@ $^
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+%.sim.o: %.c
+	$(CC) $(CFLAGS_SIM) $(INCLUDES) -c $< -o $@
+
+# C++ 파일 컴파일 시 사용할 규칙
+%.o: %.cc
+	$(CXX) $(CFLAGS_CXX) $(INCLUDES) -c $< -o $@
+%.sim.o: %.cc
+	$(CXX) $(CFLAGS_CXX_SIM) $(INCLUDES) -c $< -o $@
+
+clean:
+	rm -f $(C_OBJS) $(CXX_OBJS) $(C_OBJS_SIM) $(CXX_OBJS_SIM) $(OUTPUT) $(OUTPUT_SIM) $(UNIVERSAL_OUTPUT)
+
+universal: $(OUTPUT) $(OUTPUT_SIM)
+	lipo -create $(OUTPUT) $(OUTPUT_SIM) -output $(UNIVERSAL_OUTPUT)
+
+.PHONY: all clean universal
+
