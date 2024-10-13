@@ -23,9 +23,10 @@ CFLAGS = -arch arm64 \
          -DFZ_ENABLE_DOCX_OUTPUT=0 \
          -DFZ_ENABLE_ICC=0 \
          -DFZ_ENABLE_JPX=0 \
-         -DNDEBUG
+         -DNDEBUG \
+         -O3  # 최적화 레벨 O3
 
-CFLAGS_SIM = -arch x86_64 -arch arm64\
+CFLAGS_SIM = -arch arm64\
             -isysroot $(shell xcrun -sdk iphonesimulator --show-sdk-path) \
             -mios-simulator-version-min=12.0 \
             -DHAVE_LIBZ=1 \
@@ -47,7 +48,8 @@ CFLAGS_SIM = -arch x86_64 -arch arm64\
             -DFZ_ENABLE_DOCX_OUTPUT=0 \
             -DFZ_ENABLE_ICC=0 \
             -DFZ_ENABLE_JPX=0 \
-            -DNDEBUG
+            -DNDEBUG \
+            -O3  # 최적화 레벨 O3            
 
 CFLAGS_CXX = -arch arm64 \
              -isysroot $(shell xcrun -sdk iphoneos --show-sdk-path) \
@@ -60,9 +62,10 @@ CFLAGS_CXX = -arch arm64 \
              -fno-rtti \
              -fno-threadsafe-statics \
              -fvisibility-inlines-hidden \
-             -std=gnu++11
+             -std=gnu++11 \
+             -O3  # 최적화 레벨 O3
 
-CFLAGS_CXX_SIM = -arch x86_64 \
+CFLAGS_CXX_SIM = -arch arm64 \
              -isysroot $(shell xcrun -sdk iphonesimulator --show-sdk-path) \
              -mios-simulator-version-min=12.0 \
              -DHAVE_LIBZ=1 \
@@ -73,7 +76,8 @@ CFLAGS_CXX_SIM = -arch x86_64 \
              -fno-rtti \
              -fno-threadsafe-statics \
              -fvisibility-inlines-hidden \
-             -std=gnu++11
+             -std=gnu++11 \
+             -O3  # 최적화 레벨 O3
 
 # MuPDF source directory (current directory)
 MUPDF_DIR = .
